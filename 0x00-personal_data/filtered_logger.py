@@ -11,6 +11,13 @@ patterns = {
 }
 
 
+def filter_datum(fields: List[str], redaction: str, message: str,
+                 separator: str) -> str:
+    """ search for fields and changge it to unreadabl formate"""
+    extract, replace = (patterns["extract"], patterns["replace"])
+    return re.sub(extract(fields, separator), replace(redaction), message)
+
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -19,7 +26,8 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields):
+    def __init__(self, fields: List[str]):
+        """ Initilaizing"""
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
@@ -29,9 +37,5 @@ class RedactingFormatter(logging.Formatter):
         txt = filter_datum(self.fields, self.REDACTION, msg, self.SEPARATOR)
         return txt
 
-
-def filter_datum(fields: List[str], redaction: str, message: str,
-                 separator: str) -> str:
-    """ search for fields and changge it to unreadabl formate"""
-    extract, replace = (patterns["extract"], patterns["replace"])
-    return re.sub(extract(fields, separator), replace(redaction), message)
+if __name__ == "__main__":
+    main()
