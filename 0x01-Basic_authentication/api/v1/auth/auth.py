@@ -12,6 +12,7 @@ class Auth:
             path: path of the
             excluded_paths: deleted paths
         """
+        check = path
         if path is None or excluded_paths is None\
                 or len(excluded_paths) == 0:
             return True
