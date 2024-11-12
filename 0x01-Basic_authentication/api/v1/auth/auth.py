@@ -12,15 +12,14 @@ class Auth:
             path: path of the
             excluded_paths: deleted paths
         """
-        if path is not None and path[-1] != "/":
-            path = path + "/"
-        if excluded_paths is not None and excluded_paths != []:
-            excluded_paths = [i + "/" if i[-1] != "/" else i
-                              for i in excluded_paths]
-        if path is None or path not in excluded_paths \
-                or excluded_paths is None or excluded_paths == []:
+        if path is None or excluded_paths is None\
+                or len(excluded_paths) == 0:
             return True
-        return False
+        if path[-1] != "/":
+            check = path + "/"
+        if path in excluded_paths or check in excluded_paths:
+            return False
+        return True
 
     def authorization_header(self, request=None) -> str:
         """ autherization header

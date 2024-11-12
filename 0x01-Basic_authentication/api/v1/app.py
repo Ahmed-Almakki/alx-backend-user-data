@@ -41,7 +41,7 @@ def forbidden(error) -> str:
 
 
 @app.before_request
-def cheking():
+def befor_request():
     """ check befor make request
     """
 
@@ -50,7 +50,7 @@ def cheking():
     if auth and auth.require_auth(request.path, auth_list):
         if not auth.authorization_header(request):
             abort(401)
-        if not auth.current_user(request) is None:
+        if not auth.current_user(request):
             abort(403)
 
 
