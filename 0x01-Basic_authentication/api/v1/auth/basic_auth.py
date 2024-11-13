@@ -49,3 +49,29 @@ class BasicAuth(Auth):
             res = decoded_base64_authorization_header.split(":")
             return (res[0], res[1])
         return (None, None)
+
+    def user_object_from_credentials(
+        self, user_email: str, user_pwd: str
+    ) -> TypeVar('User'):
+        """ user object from credentials"""
+        from models.user import User
+
+        if type(user_email) == str and type(user_pwd, str) == str:
+            try:
+                user = User.search({"email": user_email})
+            except Exception:
+                return None
+        if len(user) <= 0:
+            return None
+        if user[0].is_valid_password(user_pwd):
+            return user[0]
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        overloads Auth and retrieves the User instance for a request
+        """
+        header = self.authorization_header(request)
+        b64header = self.extract_base64_authorization_header(header)
+        decoded = self.decode_base64_authorization_header(b64header)
+        user_creds = self.extract_user_credentials(decoded)
+        return self.user_object_from_credentials(*user_creds)
