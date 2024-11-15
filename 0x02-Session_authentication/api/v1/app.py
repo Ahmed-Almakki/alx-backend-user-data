@@ -51,16 +51,19 @@ def befor_request():
     """ check befor make request
     """
     request.current_user = auth.current_user(request)
-    auth_list = ['/api/v1/status/', '/api/v1/auth_session/login/'
+    auth_list = ['/api/v1/status/', '/api/v1/auth_session/login/',
                  '/api/v1/unauthorized/', '/api/v1/forbidden/']
-    if auth and auth.require_auth(request.path, auth_list):
-        if not auth.authorization_header(request):
-            abort(401)
-        if auth.authorization_header(request) and \
-            auth.session_cookie(request):
-            return None, abort(401)
-        if not request.current_user:
-            abort(403)
+    if auth is None:
+        return
+    if not auth.require_auth(request.path, auth_list):
+        return
+    if not auth.authorization_header(request) and \
+            not auth.session_cookie(request):
+        return abort(401)
+    if auth.current_user(request) is None:
+        return abort(403)
+    if not request.current_user:
+        abort(403)
 
 
 if __name__ == "__main__":
