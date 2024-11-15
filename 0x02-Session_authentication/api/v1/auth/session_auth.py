@@ -33,7 +33,7 @@ class SessionAuth(Auth):
         if not user_id:
             return
         return User.get(user_id)
-    
+
     def destroy_session(self, request=None):
         """
         Deletes a user session
