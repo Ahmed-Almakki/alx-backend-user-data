@@ -50,10 +50,11 @@ class DB:
         :return: first record
         """
         for key, value in kwargs.items():
-            users = self._session.query(User).\
-                    where(User.email == value).first()
-            if users is None:
-                raise NoResultFound("Not Found")
-            if key not in [c.key for c in User.__table__.c]:
-                raise InvalidRequestError("Invalid request")
+            pass
+        users = self._session.query(User).where(User.email == value).\
+            first()
+        if users is None:
+            raise NoResultFound("Not Found")
+        if key not in [c.key for c in User.__table__.c]:
+            raise InvalidRequestError("Invalid request")
         return users
