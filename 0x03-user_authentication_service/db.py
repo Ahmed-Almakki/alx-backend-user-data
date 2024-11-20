@@ -42,7 +42,7 @@ class DB:
         session.commit()
         return s
 
-    def find_user_by(self, *args, **kwargs):
+    def find_user_by(self, *args, **kwargs) -> User:
         """
         find the first row of the requested query
         :param args: parametrs as a list
@@ -56,4 +56,4 @@ class DB:
                 raise NoResultFound("Not Found")
             if key not in [c.key for c in User.__table__.c]:
                 raise InvalidRequestError("Invalid request")
-            return users
+        return users
