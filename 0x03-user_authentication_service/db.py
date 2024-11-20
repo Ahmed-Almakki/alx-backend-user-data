@@ -65,4 +65,5 @@ class DB:
             if key not in [c.key for c in User.__table__.c]:
                 raise ValueError
             row.key = value
+        self._session.commit()
         return None
