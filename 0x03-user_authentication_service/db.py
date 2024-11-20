@@ -57,3 +57,12 @@ class DB:
         if key not in [c.key for c in User.__table__.c]:
             raise InvalidRequestError
         return users
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ update a row with new value"""
+        row = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if key not in [c.key for c in User.__table__.c]:
+                raise ValueError
+            row.key = value
+        return None
