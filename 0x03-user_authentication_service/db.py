@@ -5,6 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 from user import Base, User
 
 
@@ -39,3 +41,19 @@ class DB:
         session.add(s)
         session.commit()
         return s
+
+    def find_user_by(self, *args, **kwargs):
+        """
+        find the first row of the requested query
+        :param args: parametrs as a list
+        :param kwargs: parameters as a dictionary
+        :return: first record
+        """
+        for key, value in kwargs.items():
+            users = self._session.query(User).\
+                    where(User.email == value).first()
+            if users is None:
+                raise NoResultFound("Not Found")
+            if key not in [c.key for c in User.__table__.c]:
+                raise InvalidRequestError("Invalid request")
+            return users
