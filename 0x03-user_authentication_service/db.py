@@ -51,8 +51,7 @@ class DB:
         """
         for key, value in kwargs.items():
             pass
-        users = self._session.query(User).where(User.email == value).\
-            first()
+        users = self._session.query(User).filter_by(**kwargs).first()
         if users is None:
             raise NoResultFound
         if key not in [c.key for c in User.__table__.c]:
