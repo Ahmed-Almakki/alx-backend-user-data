@@ -54,7 +54,7 @@ class DB:
         users = self._session.query(User).where(User.email == value).\
             first()
         if users is None:
-            raise NoResultFound("Not Found")
+            raise NoResultFound("Not found")
         if key not in [c.key for c in User.__table__.c]:
-            raise InvalidRequestError("Invalid request")
+            raise InvalidRequestError("Invalid")
         return users
