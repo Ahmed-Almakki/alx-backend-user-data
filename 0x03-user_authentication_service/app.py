@@ -2,7 +2,7 @@
 """ flask app"""
 from auth import Auth
 import flask
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, abort, redirect
 
 AUTH = Auth()
 app = Flask(__name__)
@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello() -> str:
-    return flask.jsonify({"message": "Bienvenue"})
+    return flask.jsonify({"message": "Bienvenue"}), 200
 
 
 @app.route("/users", methods=['POST'])
@@ -21,7 +21,7 @@ def users() -> str:
     try:
         AUTH.register_user(email, password)
         return flask.jsonify({"email": email,
-                              "message": "user created"})
+                              "message": "user created"}), 200
     except Exception:
         return flask.jsonify({"message": "email already registered"}), 400
 
@@ -37,7 +37,7 @@ def login() -> str:
         response.set_cookie('session_id', session_id)
         return flask.jsonify({"email": email, "message": "logged in"})
     else:
-        flask.abort(401)
+        abort(401)
 
 
 @app.route("/sessions", methods=['DELETE'])
@@ -49,7 +49,7 @@ def logout() -> str:
     user = AUTH.get_user_from_session_id(session_id)
     if user is not None:
         AUTH.destroy_session(user.id)
-        return flask.redirect("/")
+        return redirect('/')
     else:
         abort(403)
 
