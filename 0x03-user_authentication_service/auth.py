@@ -88,7 +88,8 @@ class Auth:
         """ reset password """
         try:
             user = self._db.find_user_by(email=email)
-            user.reset_token = _genrate_uuid()
-            return user.reset_token
-        except Exception:
+            new = _genrate_uuid()
+            user.reset_token = new
+            return new
+        except NoResultFound:
             raise ValueError
