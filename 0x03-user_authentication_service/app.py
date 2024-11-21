@@ -16,6 +16,7 @@ def hello():
 
 @app.route("/users", methods=['POST'])
 def users():
+    """ user post method"""
     email = request.form.get("email")
     password = request.form.get("password")
     try:
@@ -28,6 +29,7 @@ def users():
 
 @app.route("/sessions", methods=['POST'])
 def login():
+    """ login to session"""
     email = request.form.get("email")
     password = request.form.get("password")
     if AUTH.valid_login(email, password):
@@ -40,13 +42,14 @@ def login():
 
 @app.route("/sessions", methods=['DELETE'])
 def logout():
+    """ logout from session"""
     session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
-    if user:
-        AUTH.destroy_session(session_id)
+    if user is not None:
+        AUTH.destroy_session(user.id)
         return flask.redirect("/")
     else:
-        return abort(403)
+        abort(403)
 
 
 if __name__ == "__main__":
