@@ -26,7 +26,7 @@ def users() -> str:
         return flask.jsonify({"message": "email already registered"}), 400
 
 
-@app.route("/sessions", methods=['POST'])
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
     """ login to session"""
     email = request.form.get("email")
@@ -50,6 +50,17 @@ def logout() -> str:
     if user is not None:
         AUTH.destroy_session(user.id)
         return redirect('/')
+    else:
+        abort(403)
+
+
+@app.route("/profile", methods=['GET'])
+def profile():
+    """ Profile Page"""
+    session_id = request.cookies.get("session_id")
+    usr = AUTH.get_user_from_session_id(session_id)
+    if usr:
+        return flask.jsonify({"email": usr.email}), 200
     else:
         abort(403)
 
