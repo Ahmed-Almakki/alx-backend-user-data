@@ -2,7 +2,7 @@
 """ flask app"""
 from auth import Auth
 import flask
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, Response
 
 
 AUTH = Auth()
@@ -28,7 +28,7 @@ def users():
 
 
 @app.route("/sessions", methods=['POST'])
-def login():
+def login() -> Union[Response, None]:
     """ login to session"""
     email = request.form.get("email")
     password = request.form.get("password")
