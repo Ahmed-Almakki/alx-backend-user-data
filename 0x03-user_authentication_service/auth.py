@@ -89,7 +89,19 @@ class Auth:
         try:
             user = self._db.find_user_by(email=email)
             new = _genrate_uuid()
-            user.reset_token = new
+            self._db.update_user(user.id, reset_token=new)
             return new
+        except NoResultFound:
+            raise ValueError
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """
+        update_password.
+        """
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+            self._db.update_user(user.id,
+                                 hashed_password=_hash_password(password),
+                                 reset_token=None)
         except NoResultFound:
             raise ValueError
