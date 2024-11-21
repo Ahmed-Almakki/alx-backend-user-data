@@ -1,69 +1,66 @@
 #!/usr/bin/env python3
-""" flask app"""
+""" Flask class
+"""
+
 from auth import Auth
-import flask
-from flask import Flask, request, make_response, abort, redirect
+from flask import Flask, jsonify, request, abort, redirect
 
 AUTH = Auth()
 app = Flask(__name__)
 
 
-@app.route("/")
-def hello() -> str:
-    return flask.jsonify({"message": "Bienvenue"}), 200
+@app.route('/', methods=['GET'], strict_slashes=False)
+def welcome() -> str:
+    """ GET /
+    Return:
+      - welcome
+    """
+    return jsonify({"message": "Bienvenue"}), 200
 
 
-@app.route("/users", methods=['POST'])
-def users() -> str:
-    """ user post method"""
-    email = request.form.get("email")
-    password = request.form.get("password")
+@app.route('/users', methods=['POST'], strict_slashes=False)
+def user() -> str:
+    """ POST /users
+    Return:
+      - message
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
     try:
         AUTH.register_user(email, password)
-        return flask.jsonify({"email": email,
-                              "message": "user created"}), 200
+        return jsonify({"email": f"{email}", "message": "user created"}), 200
     except Exception:
-        return flask.jsonify({"message": "email already registered"}), 400
+        return jsonify({"message": "email already registered"}), 400
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
-    """ login to session"""
-    email = request.form.get("email")
-    password = request.form.get("password")
-    if AUTH.valid_login(email, password):
+    """ POST /sessions
+      Return:
+        - message
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
+    valid_login = AUTH.valid_login(email, password)
+    if valid_login:
         session_id = AUTH.create_session(email)
-        response = make_response()
+        response = jsonify({"email": f"{email}", "message": "logged in"})
         response.set_cookie('session_id', session_id)
-        return flask.jsonify({"email": email, "message": "logged in"})
+        return response
     else:
         abort(401)
 
 
-@app.route("/sessions", methods=['DELETE'])
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout() -> str:
-    """ logout from session"""
-    session_id = request.cookies.get("session_id")
-    if session_id in None:
-        abort(403)
+    """ DELETE /sessions
+      Return:
+        - message
+    """
+    session_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(session_id)
-    if user is not None:
+    if user:
         AUTH.destroy_session(user.id)
         return redirect('/')
     else:
         abort(403)
-
-
-@app.route("/profile", methods=['GET'])
-def profile():
-    """ Profile Page"""
-    session_id = request.cookies.get("session_id")
-    usr = AUTH.get_user_from_session_id(session_id)
-    if usr:
-        return flask.jsonify({"email": usr.email}), 200
-    else:
-        abort(403)
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000")
