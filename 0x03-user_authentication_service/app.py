@@ -34,7 +34,7 @@ def login():
         session_id = AUTH.create_session(email)
         out = "session_id=" + str(session_id)
         response = make_response(out)
-        response.set_cookie("session_id", session_id)
+        response.set_cookie('session_id', session_id)
         return flask.jsonify({"email": email, "message": "logged in"})
     flask.abort(401)
 
