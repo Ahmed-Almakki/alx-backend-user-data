@@ -27,14 +27,14 @@ def users():
 
 
 @app.route("/sessions", methods=['POST'])
-def login() -> Responsse:
+def login():
     email = request.form.get("email")
     password = request.form.get("password")
     if AUTH.valid_login(email, password):
         session_id = AUTH.create_session(email)
-        response = make_response()
+        out = "session_id=" + str(session_id)
+        response = make_response(out)
         response.set_cookie("session_id", session_id)
-        print(type(flask.jsonify({"email": email, "message": "logged in"})))
         return flask.jsonify({"email": email, "message": "logged in"})
     flask.abort(401)
 
