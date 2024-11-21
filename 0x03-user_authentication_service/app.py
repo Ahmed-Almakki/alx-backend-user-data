@@ -2,21 +2,19 @@
 """ flask app"""
 from auth import Auth
 import flask
-from flask import Flask, request, make_response, Response
-from typing import Union
-
+from flask import Flask, request, make_response
 
 AUTH = Auth()
 app = Flask(__name__)
 
 
 @app.route("/")
-def hello():
+def hello() -> str:
     return flask.jsonify({"message": "Bienvenue"})
 
 
 @app.route("/users", methods=['POST'])
-def users():
+def users() -> str:
     """ user post method"""
     email = request.form.get("email")
     password = request.form.get("password")
@@ -29,7 +27,7 @@ def users():
 
 
 @app.route("/sessions", methods=['POST'])
-def login() -> Union[Response, None]:
+def login() -> str:
     """ login to session"""
     email = request.form.get("email")
     password = request.form.get("password")
@@ -38,11 +36,12 @@ def login() -> Union[Response, None]:
         response = make_response()
         response.set_cookie('session_id', session_id)
         return flask.jsonify({"email": email, "message": "logged in"})
-    return flask.abort(401)
+    else:
+        flask.abort(401)
 
 
 @app.route("/sessions", methods=['DELETE'])
-def logout():
+def logout() -> str:
     """ logout from session"""
     session_id = request.cookies.get("session_id")
     if session_id in None:
