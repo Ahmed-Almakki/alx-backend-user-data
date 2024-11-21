@@ -32,11 +32,21 @@ def login():
     password = request.form.get("password")
     if AUTH.valid_login(email, password):
         session_id = AUTH.create_session(email)
-        out = "session_id=" + str(session_id)
-        response = make_response(out)
+        response = make_response()
         response.set_cookie('session_id', session_id)
         return flask.jsonify({"email": email, "message": "logged in"})
-    flask.abort(401)
+    return flask.abort(401)
+
+
+@app.route("/sessions", methods=['DELETE'])
+def logout():
+    session_id = request.form.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+    if user:
+        AUTH.destroy_session(user.id)
+        return flask.redirect("/")
+    else:
+        return abort(403)
 
 
 if __name__ == "__main__":
