@@ -4,6 +4,7 @@ Authentication file
 """
 import bcrypt
 from db import DB
+from typing import Union
 from user import User
 from uuid import uuid4
 
@@ -62,3 +63,9 @@ class Auth:
         except Exception as e:
             pass
         return
+
+    def get_user_from_session_id(self, session_id: str) -> Union[None, User]:
+        """ get user id session"""
+        if session_id:
+            return self._db.find_user_by(session_id=session_id)
+        return None
