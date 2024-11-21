@@ -43,7 +43,7 @@ def logout():
     session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
     if user:
-        AUTH.destroy_session(user.id)
+        AUTH.destroy_session(session_id)
         return flask.redirect("/")
     else:
         return abort(403)
