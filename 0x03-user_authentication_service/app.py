@@ -3,6 +3,7 @@
 from auth import Auth
 import flask
 from flask import Flask, request, make_response, Response
+from typing import Union
 
 
 AUTH = Auth()
