@@ -87,7 +87,8 @@ class Auth:
     def get_reset_password_token(self, email: str) -> str:
         """ reset password """
         user = self._db.find_user_by(email=email)
+        try:
             user.reset_token = _genrate_uuid()
             return user.reset_token
         except Exception:
-            raise ValueError 
+            raise ValueError
